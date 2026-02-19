@@ -17,7 +17,7 @@ const port=process.env.PORT || 5000
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:"https://webgen-an-website-generator.onrender.com",
     credentials:true
 }))
 app.use("/api/auth",authRouter)
@@ -29,4 +29,5 @@ app.use("/api/billing",billingRouter)
 app.listen(port,()=>{
     console.log("server started")
     connectDb()
+
 })
