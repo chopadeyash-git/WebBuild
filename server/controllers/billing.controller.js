@@ -17,7 +17,7 @@ try {
         price_data:{
             currency:"inr",
             product_data:{
-              name:`Genweb.ai ${planType.toUpperCase()} plan`  
+              name:`WebBuilderAi ${planType.toUpperCase()} plan`  
             },
             unit_amount:plan.price*100
         },
