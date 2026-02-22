@@ -1,22 +1,19 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-import {getAuth, GoogleAuthProvider} from "firebase/auth"
-// Your web app's Firebase configuration
 
+import {getAuth, GoogleAuthProvider} from "firebase/auth"
+import { initializeApp } from "firebase/app";
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "webai-7e6c4.firebaseapp.com",
-  projectId: "webai-7e6c4",
-  storageBucket: "webai-7e6c4.firebasestorage.app",
-  messagingSenderId: "987210097765",
-  appId: "1:987210097765:web:8a9fa25fa1df87b478928c"
+  authDomain: "webbuilderai-528c1.firebaseapp.com",
+  projectId: "webbuilderai-528c1",
+  storageBucket: "webbuilderai-528c1.firebasestorage.app",
+  messagingSenderId: "409697901644",
+  appId: "1:409697901644:web:b9f5b429f9af603e6728e9"
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth= getAuth(app)
 const provider=new GoogleAuthProvider()
-
 export {auth,provider}
+
+
 
