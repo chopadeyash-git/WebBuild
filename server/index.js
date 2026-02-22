@@ -17,7 +17,7 @@ const port=process.env.PORT || 5000
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin:"https://webbuilder-frontend.onrender.com/",
+    origin:"https://website-generator-frontend-2rfp.onrender.com",
     credentials:true
 }))
 app.use("/api/auth",authRouter)
@@ -31,4 +31,5 @@ app.listen(port,()=>{
     connectDb()
 
 })
+
 
