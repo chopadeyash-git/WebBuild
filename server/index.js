@@ -18,7 +18,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
     origin:"http://localhost:5173",     
-    origin:"https://webbuild-flhf.onrender.com",
+    origin:"https://webbuild-1-xheg.onrender.com",
     credentials:true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"]
@@ -34,6 +34,7 @@ app.listen(port,()=>{
     connectDb()
 
 })
+
 
 
 
