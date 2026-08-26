@@ -88,7 +88,7 @@ function Pricing() {
             const { amount, id: order_id, currency, notes } = result.data;
 
             const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_SIWJcFcCsgT2Xt", // Enter the Key ID generated from the Dashboard
                 amount: amount,
                 currency: currency,
                 name: "WebBuilderAi",
