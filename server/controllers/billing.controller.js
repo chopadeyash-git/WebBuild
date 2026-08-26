@@ -1,5 +1,5 @@
 import { PLANS } from "../config/plan.js"
-import stripe from "../config/stripe.js"
+import razorpay from "../config/razorpay.js"
 
 export const billing=async (req,res)=>{
 try {
@@ -9,36 +9,26 @@ try {
     if(!plan || plan.price==0){
         return res.status(400).json({message:"invalid paid plan"})
     }
-   const session=await stripe.checkout.sessions.create({
-    mode:"payment",
-    payment_method_types:["card"],
-    line_items:[
-      {
-        price_data:{
-            currency:"inr",
-            product_data:{
-              name:`WebBuilderAi ${planType.toUpperCase()} plan`  
-            },
-            unit_amount:plan.price*100
-        },
-        quantity:1
-      }  
-    ],
+    
+    const options = {
+        amount: plan.price * 100, // amount in the smallest currency unit (paise)
+        currency: "INR",
+        receipt: `receipt_${userId}_${Date.now()}`,
+        notes: {
+            userId: userId.toString(),
+            credits: plan.credits,
+            plan: plan.plan
+        }
+    };
 
-    metadata:{
-        userId:userId.toString(),
-        credits:plan.credits,
-        plan:plan.plan
-    },
-    success_url:`${process.env.FRONTEND_URL}/`,
-    cancel_url:`${process.env.FRONTEND_URL}/pricing`
+    const order = await razorpay.orders.create(options);
 
-   })
-
-   return res.status(200).json({
-    sessionUrl:session.url
-   })
-
+    return res.status(200).json({
+        orderId: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        notes: order.notes
+    })
 
 } catch (error) {
     console.log(error)

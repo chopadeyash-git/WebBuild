@@ -55,23 +55,83 @@ function Pricing() {
     const navigate = useNavigate()
   const {userData}=useSelector(state=>state.user)
   const [loading,setLoading]=useState(null)
-    const handleBuy=async (planKey)=>{
-if(!userData){
-navigate("/")
-return
-}
-if(planKey=="free"){
-    navigate("/dashboard")
-    return
-}
-setLoading(planKey)
-try {
-    const result=await axios.post(`${serverUrl}/api/billing`,{planType:planKey},{withCredentials:true})
-    window.location.href=result.data.sessionUrl
-} catch (error) {
-    console.log(error)
-    setLoading(null)
-}
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            const script = document.createElement("script");
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
+    const handleBuy = async (planKey) => {
+        if (!userData) {
+            navigate("/")
+            return
+        }
+        if (planKey == "free") {
+            navigate("/dashboard")
+            return
+        }
+        setLoading(planKey)
+        try {
+            const res = await loadRazorpayScript();
+            if (!res) {
+                alert("Razorpay SDK failed to load. Are you online?");
+                setLoading(null);
+                return;
+            }
+
+            // Create order on the backend
+            const result = await axios.post(`${serverUrl}/api/billing`, { planType: planKey }, { withCredentials: true })
+            const { amount, id: order_id, currency, notes } = result.data;
+
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
+                amount: amount,
+                currency: currency,
+                name: "WebBuilderAi",
+                description: `Purchase ${planKey} plan`,
+                order_id: result.data.orderId,
+                handler: async function (response) {
+                    try {
+                        const verifyResult = await axios.post(`${serverUrl}/api/billing/verify`, {
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature,
+                            notes: result.data.notes
+                        }, { withCredentials: true });
+
+                        if (verifyResult.data.success) {
+                            window.location.href = "/dashboard";
+                        }
+                    } catch (error) {
+                        console.error("Payment verification failed", error);
+                        alert("Payment verification failed.");
+                    }
+                },
+                prefill: {
+                    name: userData.name || "User",
+                    email: userData.email || "",
+                },
+                theme: {
+                    color: "#6366f1"
+                }
+            };
+
+            const paymentObject = new window.Razorpay(options);
+            paymentObject.on("payment.failed", function (response) {
+                alert("Payment failed: " + response.error.description);
+            });
+            paymentObject.open();
+
+        } catch (error) {
+            console.log(error)
+            alert("Something went wrong!");
+        } finally {
+            setLoading(null)
+        }
 
     }
     return (
